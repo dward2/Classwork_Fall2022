@@ -3,6 +3,7 @@ def interface():
     print("Options:")
     print("1 - Analyze HDL")
     print("2 - Analyze LDL")
+    print("3 - Analyze Total Cholesterol")
     print("9 - Quit")
     keep_running = True
     while keep_running:
@@ -13,6 +14,8 @@ def interface():
             HDL_driver()
         elif choice == "2":
             LDL_driver()
+        elif choice == "3":
+            total_driver()
             
 def input_HDL():
     HDL_input = input("Enter the HDL value:")
@@ -56,6 +59,11 @@ def LDL_driver():
     answer = check_LDL(ldl_value)
     output_LDL_result(ldl_value, answer)
     
-       
+def input_total_cholesterol():
+    total_input = input("Enter the total cholesterol value:")
+    return int(total_input)
+
+def total_driver():
+    total_value = input_total_cholesterol()
 
 interface()
