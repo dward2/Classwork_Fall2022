@@ -47,10 +47,14 @@ def check_LDL(LDL_value):
         return "High"
     else:
         return "Very high"
+        
+def output_LDL_result(ldl_value, charac):
+    print("The results for an HDL value of {} is {}".format(ldl_value, charac))
 
 def LDL_driver():
     ldl_value = input_LDL()
     answer = check_LDL(ldl_value)
+    output_LDL_result(ldl_value, answer)
     
        
 
