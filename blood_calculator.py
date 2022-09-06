@@ -38,8 +38,19 @@ def input_LDL():
     LDL_input = input("Enter the LDL value:")
     return int(LDL_input)
     
+def check_LDL(LDL_value):
+    if LDL_value < 130:
+        return "Normal"
+    elif 130 <= LDL_value < 160:
+        return "Borerline high"
+    elif 160 <= LDL_value < 190:
+        return "High"
+    else:
+        return "Very high"
+
 def LDL_driver():
     ldl_value = input_LDL()
+    answer = check_LDL(ldl_value)
     
        
 
