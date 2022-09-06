@@ -62,8 +62,17 @@ def LDL_driver():
 def input_total_cholesterol():
     total_input = input("Enter the total cholesterol value:")
     return int(total_input)
+    
+def check_total_cholesterol(total_value):
+    if total_value < 200:
+        return "Normal"
+    elif 200 <= total_value < 240:
+        return "Borderline high"
+    else:
+        return "High"
 
 def total_driver():
     total_value = input_total_cholesterol()
+    answer = check_total_cholesterol(total_value)
 
 interface()
