@@ -70,9 +70,13 @@ def check_total_cholesterol(total_value):
         return "Borderline high"
     else:
         return "High"
+        
+def output_total_cholesterol_result(total_value, charac):
+    print("The results for a total cholesterol value of {} is {}".format(total_value, charac))
 
 def total_driver():
     total_value = input_total_cholesterol()
     answer = check_total_cholesterol(total_value)
+    output_total_cholesterol_result(total_value, answer)
 
 interface()
