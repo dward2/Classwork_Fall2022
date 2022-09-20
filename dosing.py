@@ -35,4 +35,3 @@ def dose_amount():
 
 if __name__ == '__main__':
     dose_amount()
-
