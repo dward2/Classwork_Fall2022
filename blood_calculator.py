@@ -48,7 +48,7 @@ def check_LDL(LDL_value):
     if LDL_value < 130:
         return "Normal"
     elif 130 <= LDL_value < 160:
-        return "Borerline high"
+        return "Borderline high"
     elif 160 <= LDL_value < 190:
         return "High"
     else:
