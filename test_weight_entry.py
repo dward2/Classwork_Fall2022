@@ -27,4 +27,3 @@ def test_add(a, b, expected):
     answer = add_number(a, b)
     print(pytest.approx(expected))
     assert answer == pytest.approx(expected)
-    
