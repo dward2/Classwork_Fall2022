@@ -1,6 +1,6 @@
 jupyter
 pytest
 pytest-pycodestyle
-
+matplotlib
 
 
