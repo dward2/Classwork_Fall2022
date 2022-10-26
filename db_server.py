@@ -4,7 +4,7 @@ from flask import Flask, request, jsonify
 
 """
     Database format:  A list of patient dictionaries
-    
+
     [{
     "name": <string>,
     "id": <integer>,
