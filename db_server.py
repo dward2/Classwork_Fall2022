@@ -55,7 +55,14 @@ def add_patient(patient_name, patient_id, blood_type):
                    "test_name": [],
                    "test_result": []}
     db.append(new_patient)
+    print_database()  # Print so I can see what changes made
 
+
+def print_database():
+    print("\n** Database Output **")
+    for i, patient in enumerate(db):
+        print("{}: {}".format(i, patient))
+    print("\n")
 
 def init_server():
     """Initializes server and database upon program start
