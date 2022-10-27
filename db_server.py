@@ -1,6 +1,7 @@
 # db_server.py
 
 from flask import Flask, request, jsonify
+import logging
 
 """
     Database format:  A list of patient dictionaries
@@ -59,10 +60,14 @@ def add_patient(patient_name, patient_id, blood_type):
 
 
 def print_database():
+    """Print the database to the console in order to visual changes to the
+    database during server operation.
+    """
     print("\n** Database Output **")
     for i, patient in enumerate(db):
         print("{}: {}".format(i, patient))
     print("\n")
+
 
 def init_server():
     """Initializes server and database upon program start
@@ -80,6 +85,7 @@ def init_server():
     add_patient("Ann Ables", 1, "A+")
     add_patient("Bob Boyles", 2, "B+")
     # initialization of logging could be added here
+    logging.basicConfig(filename="server.log")
 
 
 @app.route("/new_patient", methods=["POST"])
@@ -182,6 +188,133 @@ def validate_new_patient_info(in_data):
     for key, ex_type in zip(expected_keys, expected_types):
         if type(in_data[key]) is not ex_type:
             return "Key {}'s value has the wrong data type".format(key)
+    return True
+
+
+@app.route("/add_test", methods=["POST"])
+def add_test_flask_handler():
+    """POST route to receive information about a test data to add to a patient
+    record in the database.
+
+    This "Flask handler" function receives a POST request to add a test result
+    to a patient record in the database.  The POST request should receive a
+    dictionary encoded as a JSON string in the following format:
+
+        {"id": int,
+         "test_name": str,
+         "test_result": int}
+
+    The value of "id" is an integer that is the medical record number for the
+    patient.  The value of "test_name" is a string containing the name of the
+    test.  The value of "test_result" is an integer containing the numeric
+    result of the test.
+
+    The function first receives the dictionary sent with the POST request.  It
+    then calls a worker function to act on the data.  It finally returns the
+    resulting message and status code.
+    """
+
+    in_data = request.get_json()
+    msg, status_code = add_test_worker(in_data)
+    return msg, status_code
+
+
+def add_test_worker(in_data):
+    """Implements the '/add_test' route
+
+    This function performs the data validation and implementation for the
+    `/add_test` route which adds a new test result to the database entry
+    for a specific patient.  It first calls a function that validates that
+    the necessary keys and value data types exist in the input dictionary.
+    If the necessary information does not exist, the function returns an
+    error message and a status code of 400.  Otherwise, another function is
+    called and sent the necessary information to add the test results to
+    the correct patient.  A success message and a 200 status code is then
+    returned.
+
+    Args:
+        in_data (dict): Data received from the POST request.  Should be a
+        dictionary with the format found in the docstring of the
+        "add_test_flask_handler" function, but that needs to be verified
+
+    Returns:
+        str, int: a message with information about the success or failure of
+            the operation and a status code
+        """
+    msg = add_test_validation(in_data)
+    if msg is not True:
+        return msg, 400
+    add_test_to_patient(in_data)
+    return "Test added", 200
+
+
+def find_patient(patient_id):
+    """Finds a patient in the database with a given id.
+
+    This function iterates through the database list and compares the patient
+    id of each patient in the list against a target id.  When the target id is
+    found, that patient is returned to the calling function.  If the target id
+    is not found, a value of False is returned.
+
+    Args:
+        patient_id (int): the patient id of interest
+
+    Returns:
+        dict: patient information of patient with id that matches parameter id,
+                or
+        bool: False if no patient record with the parameter id is found.
+    """
+    for patient in db:
+        if patient["id"] == patient_id:
+            return patient
+    return False
+
+
+def add_test_to_patient(in_data):
+    """Adds test result to target patient record
+
+    A call to the "find_patient" function returns the patient dictionary of
+    the patient with the "id" found in the "in_data" dictionary.  The
+    "test_name" and "test_result" from the "in_data" dictionary are then
+    appended to the appropriate list in the patient dictionary.
+
+    Args:
+        in_data (dict): Contains the patient id and test results to be added
+
+    Returns:
+        None
+    """
+    patient = find_patient(in_data["id"])
+    patient["test_name"].append(in_data["test_name"])
+    patient["test_result"].append(in_data["test_result"])
+    print_database()
+
+
+def add_test_validation(in_data):
+    """Validates that appropriate data was sent to the "/add_test" route.
+
+    This function receives the dictionary that was sent with the POST request
+    to the "/add_test" route.  It checks to see that the keys "id",
+    "test_name", and "test_result" exist, and that the corresponding value
+    data types are int, str, and int.  An error message is returned if a key
+    is missing or there is an invalid data type.  If keys and data types are
+    correct, a value of True is returned.
+
+    Args:
+        in_data (dict): object received by the POST request
+
+    Returns:
+        str: error message if there is a problem with the input data, or
+        bool: True if input data is valid.
+
+    """
+    expected_keys = ["id", "test_name", "test_result"]
+    expected_types = [int, str, int]
+    for ex_key, ex_type in zip(expected_keys, expected_types):
+        if ex_key not in in_data:
+            return "Key missing"
+        if type(in_data[ex_key]) is not ex_type:
+            return "Bad value type"
     return True
 
 
