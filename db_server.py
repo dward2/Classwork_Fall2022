@@ -85,7 +85,7 @@ def init_server():
     add_patient("Ann Ables", 1, "A+")
     add_patient("Bob Boyles", 2, "B+")
     # initialization of logging could be added here
-    logging.basicConfig(filename="server.log")
+    logging.basicConfig(filename="server.log", filemode='w')
 
 
 @app.route("/new_patient", methods=["POST"])
