@@ -140,7 +140,9 @@ def add_new_patient_worker(in_data):
             the operation and a status code
 
     """
-    result = validate_new_patient_info(in_data)
+    expected_keys = ["name", "id", "blood_type"]
+    expected_types = [str, int, str]
+    result = dictionary_validation(in_data, expected_keys, expected_types)
     if result is not True:
         return result, 400
     add_patient(in_data["name"],
@@ -179,48 +181,6 @@ def dictionary_validation(in_data, expected_keys, expected_types):
             return "Key {} is missing from POST data".format(ex_key)
         if type(in_data[ex_key]) is not ex_type:
             return "Key {}'s value has the wrong data type".format(ex_key)
-    return True
-
-
-def validate_new_patient_info(in_data):
-    """Validates input for '/new_patient' POST request
-
-    This function validates that the input to the `/new_patient` POST request
-    contains a dictionary with the needed keys and value types.  It checks that
-    the input parameter is a dictionary, has the following keys, and that each
-    key has the correct value type:
-
-        "name": str
-        "id": int
-        "blood_type": str
-
-    If the input data is not a dictionary, a key is missing, or a data type is
-    incorrect, a string message is returned with information about the error.
-    Otherwise, a boolean of True is returned.
-
-    Args:
-        in_data (dict): Data received from the POST request.  Should be a
-            dictionary with the format found in the docstring of the
-            "add_new_patient_to_server" function, but that is verified by this
-            function
-
-    Returns:
-        bool: True if all needed keys exist with values of the correct data
-                type
-        str: Error message if a key is missing or a value data type is
-                incorrect
-
-    """
-    if type(in_data) is not dict:
-        return "POST data was not a dictionary"
-    expected_keys = ["name", "id", "blood_type"]
-    for key in expected_keys:
-        if key not in in_data:
-            return "Key {} is missing from POST data".format(key)
-    expected_types = [str, int, str]
-    for key, ex_type in zip(expected_keys, expected_types):
-        if type(in_data[key]) is not ex_type:
-            return "Key {}'s value has the wrong data type".format(key)
     return True
 
 
@@ -274,7 +234,9 @@ def add_test_worker(in_data):
         str, int: a message with information about the success or failure of
             the operation and a status code
         """
-    msg = add_test_validation(in_data)
+    expected_keys = ["id", "test_name", "test_result"]
+    expected_types = [int, str, int]
+    msg = dictionary_validation(in_data, expected_keys, expected_types)
     if msg is not True:
         return msg, 400
     add_test_to_patient(in_data)
@@ -321,34 +283,6 @@ def add_test_to_patient(in_data):
     patient["test_name"].append(in_data["test_name"])
     patient["test_result"].append(in_data["test_result"])
     print_database()
-
-
-def add_test_validation(in_data):
-    """Validates that appropriate data was sent to the "/add_test" route.
-
-    This function receives the dictionary that was sent with the POST request
-    to the "/add_test" route.  It checks to see that the keys "id",
-    "test_name", and "test_result" exist, and that the corresponding value
-    data types are int, str, and int.  An error message is returned if a key
-    is missing or there is an invalid data type.  If keys and data types are
-    correct, a value of True is returned.
-
-    Args:
-        in_data (dict): object received by the POST request
-
-    Returns:
-        str: error message if there is a problem with the input data, or
-        bool: True if input data is valid.
-
-    """
-    expected_keys = ["id", "test_name", "test_result"]
-    expected_types = [int, str, int]
-    for ex_key, ex_type in zip(expected_keys, expected_types):
-        if ex_key not in in_data:
-            return "Key missing"
-        if type(in_data[ex_key]) is not ex_type:
-            return "Bad value type"
-    return True
 
 
 @app.route("/get_results/<patient_id>", methods=["GET"])
