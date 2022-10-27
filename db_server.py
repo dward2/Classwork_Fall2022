@@ -321,15 +321,15 @@ def add_test_validation(in_data):
 @app.route("/get_results/<patient_id>", methods=["GET"])
 def get_results_flask_handler(patient_id):
     """GET route to obtain results for a specific patient
-    
+
     This function implements a variable URL in which the server returns
     patient information.  The variable URL will contain the medical record
     number, or id, of the patient of interest.  This id is passed to a function
     that will retrieve the data for this function to return.
-    
+
     Args:
         patient_id (str): the variable portion of the URL which should contain
-            the patient medical record number 
+            the patient medical record number
 
     Returns:
         str, int: message on result of request and the status code
