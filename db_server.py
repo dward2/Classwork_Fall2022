@@ -318,6 +318,84 @@ def add_test_validation(in_data):
     return True
 
 
+@app.route("/get_results/<patient_id>", methods=["GET"])
+def get_results_flask_handler(patient_id):
+    """GET route to obtain results for a specific patient
+    
+    This function implements a variable URL in which the server returns
+    patient information.  The variable URL will contain the medical record
+    number, or id, of the patient of interest.  This id is passed to a function
+    that will retrieve the data for this function to return.
+    
+    Args:
+        patient_id (str): the variable portion of the URL which should contain
+            the patient medical record number 
+
+    Returns:
+        str, int: message on result of request and the status code
+
+    """
+    result, status_code = get_results_worker(patient_id)
+    return jsonify(result), status_code
+
+
+def get_results_worker(patient_id):
+    """Implements the "/get_results/<patient_id>" route
+
+    This function receives, as a string, the portion of the variable URL that
+    should contain the id number of the patient to retrieve.  The function
+    first calls a validation function to ensure that the patient id is valid
+    and that the patient exists in the database.  If not, an error message is
+    returned with a status code of 400.  If the patient id is valid and there
+    is a patient with that id, a call is made to a function to retrieve that
+    patient, and the patient dictionary is returned with a status code of 200.
+
+    Args:
+        patient_id (str): patient id found in variable URL
+
+    Returns:
+        str, int: error message and 400 status code if patient_id parameter is
+                    invalid, or
+        dict, int: patient dictionary and 200 status code if patient_id matches
+                    an entry in database
+
+    """
+    msg = validate_patient_id(patient_id)
+    if msg is not True:
+        return msg, 400
+    patient = find_patient(int(patient_id))
+    return patient, 200
+
+
+def validate_patient_id(patient_id_str):
+    """Validates that received patient id is an integer and that patient exists
+
+    This function validates the information received by the variable URL
+    "/get_results/<patient_id>".  First, it checks that the "patient_id"
+    received represents a number.  It then checks that a patient exists in the
+    database with that number.  If either of these conditions is not true,
+    an error message string is returned.  If both are true, a value of True
+    is returned to indicate a valid input.
+
+    Args:
+        patient_id_str (str): The portion of the variable URL that should
+            contain the patient ID
+
+    Returns:
+        str: error message if validation fails, or
+        bool: True if validation passes
+
+    """
+    try:
+        patient_id = int(patient_id_str)
+    except ValueError:
+        return "Patient id provided was not an integer"
+    patient = find_patient(patient_id)
+    if patient is False:
+        return "No patient with id provided was found"
+    return True
+
+
 if __name__ == '__main__':
     # Call function to initialize server and database
     init_server()
