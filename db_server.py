@@ -149,6 +149,39 @@ def add_new_patient_worker(in_data):
     return "Patient successfully added", 200
 
 
+def dictionary_validation(in_data, expected_keys, expected_types):
+    """Validates that input data is a dictionary with correct information
+
+    This function receives a dictionary that was sent with a POST request.  It
+    also receives lists of the keys and value data types that are expected to
+    be in this dictionary.  The function then verifies that the expected keys
+    are found in the dictionary and that the corresponding value data types
+    are of the correct type.  An error message is returned if a key
+    is missing or there is an invalid data type.  If keys and data types are
+    correct, a value of True is returned.
+
+    Args:
+        in_data (dict): object received by the POST request
+        expected_keys (list): keys that should be found in the POST request
+            dictionary
+        expected_types (list): the value data types that should be found in the
+            POST request dictionary
+
+    Returns:
+        str: error message if there is a problem with the input data, or
+        bool: True if input data is valid.
+
+    """
+    if type(in_data) is not dict:
+        return "POST data was not a dictionary"
+    for ex_key, ex_type in zip(expected_keys, expected_types):
+        if ex_key not in in_data:
+            return "Key {} is missing from POST data".format(ex_key)
+        if type(in_data[ex_key]) is not ex_type:
+            return "Key {}'s value has the wrong data type".format(ex_key)
+    return True
+
+
 def validate_new_patient_info(in_data):
     """Validates input for '/new_patient' POST request
 
