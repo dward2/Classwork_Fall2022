@@ -55,8 +55,8 @@ def add_patient(patient_name, patient_id, blood_type):
     new_patient = Patient(name=patient_name,
                           id=patient_id,
                           blood_type=blood_type)
-    added_patient = new_patient.save()
-    return added_patient
+    new_patient.save()
+
 
 
 
