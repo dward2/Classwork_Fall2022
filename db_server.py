@@ -2,6 +2,8 @@
 
 from flask import Flask, request, jsonify
 import logging
+from pymodm import connect, MongoModel, fields
+from database_definition import Patient
 
 """
     Database format:  A list of patient dictionaries
@@ -16,7 +18,7 @@ import logging
 """
 
 # Create a global variable to hold the database
-db = []
+
 
 # Create an instance of the Flask server
 app = Flask(__name__)
@@ -50,23 +52,12 @@ def add_patient(patient_name, patient_id, blood_type):
         None
 
     """
-    new_patient = {"name": patient_name,
-                   "id": patient_id,
-                   "blood_type": blood_type,
-                   "test_name": [],
-                   "test_result": []}
-    db.append(new_patient)
-    print_database()  # Print so I can see what changes made
+    new_patient = Patient(name=patient_name,
+                          id=patient_id,
+                          blood_type=blood_type)
+    added_patient = new_patient.save()
+    return added_patient
 
-
-def print_database():
-    """Print the database to the console in order to visual changes to the
-    database during server operation.
-    """
-    print("\n** Database Output **")
-    for i, patient in enumerate(db):
-        print("{}: {}".format(i, patient))
-    print("\n")
 
 
 def init_server():
@@ -82,10 +73,12 @@ def init_server():
     Returns:
         None
     """
-    add_patient("Ann Ables", 1, "A+")
-    add_patient("Bob Boyles", 2, "B+")
+    # add_patient("Ann Ables", 1, "A+")
+    # add_patient("Bob Boyles", 2, "B+")
     # initialization of logging could be added here
     logging.basicConfig(filename="server.log", filemode='w')
+    connect("mongodb+srv://dave:dave@bme547.ba348.mongodb.net/"
+            "health_db?retryWrites=true&w=majority")
 
 
 @app.route("/new_patient", methods=["POST"])
@@ -259,9 +252,9 @@ def find_patient(patient_id):
                 or
         bool: False if no patient record with the parameter id is found.
     """
-    for patient in db:
-        if patient["id"] == patient_id:
-            return patient
+    # for patient in db:
+    #     if patient["id"] == patient_id:
+    #         return patient
     return False
 
 
@@ -282,7 +275,6 @@ def add_test_to_patient(in_data):
     patient = find_patient(in_data["id"])
     patient["test_name"].append(in_data["test_name"])
     patient["test_result"].append(in_data["test_result"])
-    print_database()
 
 
 @app.route("/get_results/<patient_id>", methods=["GET"])
