@@ -2,23 +2,14 @@
 
 from flask import Flask, request, jsonify
 import logging
-from pymodm import connect, MongoModel, fields
+from pymodm import connect
 from database_definition import Patient
 
 """
-    Database format:  A list of patient dictionaries
-
-    [{
-    "name": <string>,
-    "id": <integer>,
-    "blood_type": <string>,
-    "test_name": [<string1>, <string2>, ...],
-    "test_result": [<string>, <string2>, ...]
-    }]
+    Database format:  this version is using a MongoDB database, and the
+    database definition is found in a different module.  Check out the
+    import statements.
 """
-
-# Create a global variable to hold the database
-
 
 # Create an instance of the Flask server
 app = Flask(__name__)
@@ -34,14 +25,9 @@ def server_on():
 def add_patient(patient_name, patient_id, blood_type):
     """ Appends a new patient dictionary to the database list
 
-    This function receives basic information on a new patient, creates a
-    dictionary containing that information, as well as empty lists to hold
-    test names and results to be added in the future, and appends this
-    dictionary to the database list.
-
-    The database is being stored in an internal global variable.  As this
-    variable is a list that has already been created, and a list is a
-    mutable data type, the use of the "global" keyword is not required.
+    This function receives basic information on a new patient, creates an
+    instance of the Patient class to contain that information, and saves the
+    entry to the MongoDB database.
 
     Args:
         patient_name (str): Full name of patient
@@ -49,15 +35,14 @@ def add_patient(patient_name, patient_id, blood_type):
         blood_type (str): Blood type of the patient
 
     Returns:
-        None
-
+        Patient: instance of Patient class that contains the information
+                    successfully saved to MongoDB database.
     """
     new_patient = Patient(name=patient_name,
                           id=patient_id,
                           blood_type=blood_type)
-    new_patient.save()
-
-
+    added_patient = new_patient.save()
+    return added_patient
 
 
 def init_server():
@@ -65,19 +50,15 @@ def init_server():
 
     This function will contain any code that should be executed upon the
     initial start of the server.  This could include any connections to an
-    external database, initial database entries, logging set-up, etc.  As this
-    version of the program is using an internal variable for the database, it
-    is simply adding some initial patients to the database for testing
-    purposes.
+    external database, initial database entries, logging set-up, etc.  This
+    version of the program is using a MongoDb external database, so the
+    connect string is called here.
 
     Returns:
         None
     """
-    # add_patient("Ann Ables", 1, "A+")
-    # add_patient("Bob Boyles", 2, "B+")
-    # initialization of logging could be added here
     logging.basicConfig(filename="server.log", filemode='w')
-    connect("mongodb+srv://dave:dave@bme547.ba348.mongodb.net/"
+    connect("mongodb+srv://daw_nov2022:daw_nov2022@bme547.ba348.mongodb.net/"
             "health_db?retryWrites=true&w=majority")
 
 
@@ -252,6 +233,9 @@ def find_patient(patient_id):
                 or
         bool: False if no patient record with the parameter id is found.
     """
+    # This commented out during transition from internal global variable to
+    #   external MongoDB database so an intermediate version will run without
+    #   a syntax error.
     # for patient in db:
     #     if patient["id"] == patient_id:
     #         return patient
