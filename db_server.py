@@ -213,8 +213,8 @@ def add_test_worker(in_data):
     msg = dictionary_validation(in_data, expected_keys, expected_types)
     if msg is not True:
         return msg, 400
-    add_test_to_patient(in_data)
-    return "Test added", 200
+    msg, status_code = add_test_to_patient(in_data)
+    return msg, status_code
 
 
 def find_patient(patient_id):
@@ -236,10 +236,12 @@ def find_patient(patient_id):
     # This commented out during transition from internal global variable to
     #   external MongoDB database so an intermediate version will run without
     #   a syntax error.
-    # for patient in db:
-    #     if patient["id"] == patient_id:
-    #         return patient
-    return False
+    from pymodm import errors as pymodm_errors
+    try:
+        found_patient = Patient.objects.raw({"_id": patient_id }).first()
+    except pymodm_errors.DoesNotExist:
+        return False
+    return found_patient
 
 
 def add_test_to_patient(in_data):
@@ -257,8 +259,12 @@ def add_test_to_patient(in_data):
         None
     """
     patient = find_patient(in_data["id"])
-    patient["test_name"].append(in_data["test_name"])
-    patient["test_result"].append(in_data["test_result"])
+    if patient is False:
+        return "Patient ID {} not found in database.".format(in_data["id"]), 400
+    patient.test_name.append(in_data["test_name"])
+    patient.test_result.append(in_data["test_result"])
+    patient.save()
+    return "Successfully added test.", 200
 
 
 @app.route("/get_results/<patient_id>", methods=["GET"])
@@ -307,7 +313,9 @@ def get_results_worker(patient_id):
     if msg is not True:
         return msg, 400
     patient = find_patient(int(patient_id))
-    return patient, 200
+    patient_output = {"name": patient.name,
+                      "test": patient.test_name}
+    return patient_output, 200
 
 
 def validate_patient_id(patient_id_str):
