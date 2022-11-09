@@ -61,8 +61,8 @@ def init_server():
     import os
     mongo_account = os.environ['MONGO_ACCT']
     mongo_pswd = os.environ['MONGO_PSWD']
-    connect("mongodb+srv://mongo_account:mongo_pswd@bme547.ba348.mongodb.net/"
-            "health_db?retryWrites=true&w=majority")
+    connect("mongodb+srv://{}:{}@bme547.ba348.mongodb.net/health_db"
+            "?retryWrites=true&w=majority".format(mongo_account, mongo_pswd))
 
 
 @app.route("/new_patient", methods=["POST"])
