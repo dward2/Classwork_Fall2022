@@ -58,8 +58,7 @@ def init_server():
         None
     """
     logging.basicConfig(filename="server.log", filemode='w')
-    connect("mongodb+srv://daw_safe:daw_safe@bme547.ba348.mongodb.net/"
-            "health_db?retryWrites=true&w=majority")
+    connect("Enter Your Connect String")
 
 
 @app.route("/new_patient", methods=["POST"])
