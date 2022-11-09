@@ -58,7 +58,10 @@ def init_server():
         None
     """
     logging.basicConfig(filename="server.log", filemode='w')
-    connect("mongodb+srv://daw_alien:xbzXZ35Y4xlP@bme547.ba348.mongodb.net/"
+    import os
+    mongo_account = os.environ['MONGO_ACCT']
+    mongo_pswd = os.environ['MONGO_PSWD']
+    connect("mongodb+srv://mongo_account:mongo_pswd@bme547.ba348.mongodb.net/"
             "health_db?retryWrites=true&w=majority")
 
 
