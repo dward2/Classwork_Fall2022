@@ -58,7 +58,7 @@ def init_server():
         None
     """
     logging.basicConfig(filename="server.log", filemode='w')
-    connect("mongodb+srv://daw_safe:daw_safe@bme547.ba348.mongodb.net/"
+    connect("mongodb+srv://daw_alien:xbzXZ35Y4xlP@bme547.ba348.mongodb.net/"
             "health_db?retryWrites=true&w=majority")
 
 
