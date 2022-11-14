@@ -1,7 +1,4 @@
 name: Pytest with Pycodestyle
-env:
-    MONGO_ACCT: ${{ secrets.MONGO_DB_ACCT_NAME}}
-    MONGO_PSWD: ${{ secrets.MONGO_DB_ACCT_PSWD}}
 
 on: [push, pull_request]
 

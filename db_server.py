@@ -58,11 +58,7 @@ def init_server():
         None
     """
     logging.basicConfig(filename="server.log", filemode='w')
-    import os
-    mongo_account = os.environ['MONGO_ACCT']
-    mongo_pswd = os.environ['MONGO_PSWD']
-    connect("mongodb+srv://{}:{}@bme547.ba348.mongodb.net/health_db"
-            "?retryWrites=true&w=majority".format(mongo_account, mongo_pswd))
+    connect("Enter your connect string here.")
 
 
 @app.route("/new_patient", methods=["POST"])
