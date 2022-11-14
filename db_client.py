@@ -7,6 +7,9 @@ def upload_patient_info(patient_name, patient_id, patient_blood_type):
     the needed JSON dictionary with this data, and issues a POST request
     to the server to upload this data.  The response information is returned.
 
+    The request is done inside a try/except block to capture the case where
+    a connection to the server could not be reached.
+
     Args:
         patient_name (str): patient name
         patient_id (int): patient medical record number
@@ -18,7 +21,10 @@ def upload_patient_info(patient_name, patient_id, patient_blood_type):
     """
     out_data = {"name": patient_name, "id": patient_id,
                 "blood_type": patient_blood_type}
-    r = requests.post("http://127.0.0.1:5000/new_patient", json=out_data)
+    try:
+        r = requests.post("http://127.0.0.1:5000/new_patient", json=out_data)
+    except requests.exceptions.ConnectionError:
+        return "Connection error.  Verify server is running.", 0
     return r.text, r.status_code
 
 
