@@ -58,7 +58,7 @@ def init_server():
         None
     """
     logging.basicConfig(filename="server.log", filemode='w')
-    connect("Enter Your Connect String")
+    connect("Enter Your Connect String Here")
 
 
 @app.route("/new_patient", methods=["POST"])
