@@ -7,7 +7,7 @@ def upload_image():
     filename = get_image_file_name()
     b64_string = convert_file_to_b64(filename)
     print(b64_string)
-    result = upload_b64_to_server(b64_string)
+    upload_b64_to_server(b64_string)
 
 
 def get_image_file_name():
